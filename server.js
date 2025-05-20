@@ -11,7 +11,7 @@ const adminRoutes = require('./routes/admin');
 
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000; // use PORT from Render or fallback to 5000 for local dev
 
 // Serve static files (like images)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
