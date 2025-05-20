@@ -15,22 +15,23 @@ const upload = multer({ storage }); // ✅ THIS DEFINES upload
 
 
 // Get all tents
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const sql = 'SELECT * FROM tents';
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Database error' }); // Use "return" to stop further execution
-    }
-
+  try {
+    const [results] = await db.query(sql);
+    
     const formattedTents = results.map(tent => ({
       ...tent,
       image: tent.image.replace(/\\/g, '/'),
     }));
 
-    res.json(formattedTents); // This sends the response once
-  });
+    res.json(formattedTents);
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
+
 
 // Add a new tent
 router.post('/', upload.single('image'), (req, res) => {
